@@ -1,3 +1,7 @@
+# Nama : Marcellus Michael Herman Kahari
+# NIM : 13520057
+# Kelas : K03
+
 from copy import deepcopy
 import random
 

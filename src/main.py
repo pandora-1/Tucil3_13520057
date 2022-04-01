@@ -1,3 +1,7 @@
+# Nama : Marcellus Michael Herman Kahari
+# NIM : 13520057
+# Kelas : K03
+
 from helper import *
 from puzzle import *
 import time
