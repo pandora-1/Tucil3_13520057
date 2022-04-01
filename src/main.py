@@ -1,7 +1,16 @@
 from helper import *
 from puzzle import *
 import time
+from queue import PriorityQueue
 
+print("""
+  __ _____       _____               _      
+ /_ | ____|     |  __ \             | |     
+  | | |__ ______| |__) |   _ _______| | ___ 
+  | |___ \______|  ___/ | | |_  /_  / |/ _ 
+  | |___) |     | |   | |_| |/ / / /| |  __/
+  |_|____/      |_|    \__,_/___/___|_|\___|
+""")
 print()
 print("Selamat datang di permainan puzzle 15")
 print("Kami tidak pernah meragukan pemain meski permintaannya aneh-aneh")
@@ -37,38 +46,38 @@ print("Total KURANG(i) + X adalah ", total_I_below_J + valueX_temp)
 if(total_I_below_J + valueX_temp % 2 == 1):
     print("Tidak bisa diselesaikan")
 else:
-    puzzle_saver = [] # Menyimpan puzzle yang sudah dikunjungi dan bertindak sebagai prioqueue
+    puzzle_saver = PriorityQueue() # Menyimpan puzzle yang sudah dikunjungi dan bertindak sebagai prioqueue
     puzzle_count_node = [] # Menyimpan jumlah node yang dibangkitkan untuk puzzle yang sudah dikunjungi
 
-    puzzle_saver.append(puzzle) # Inisialisasi pertama kali
+    puzzle_saver.put((0,puzzle)) # Inisialisasi pertama kali
     puzzle_count_node.append(puzzle) # Inisialisasi pertama kali
 
     startTime = time.time() # Waktu menghitung dimulai
-    while(countDifferent(puzzle_saver[0].getPuzzle(), puzzle_solution) != 0): # Jika masih terdapat perbedaan, lakukan while loop
-        currentPuzzle = puzzle_saver.pop(0) # Menghapus elemen pertama dari priqueue
+    while(countDifferent(puzzle_saver.queue[0][1].getPuzzle(), puzzle_solution) != 0): # Jika masih terdapat perbedaan, lakukan while loop
+        currentPuzzle = puzzle_saver.get()[1] # Menghapus elemen pertama dari priqueue
 
         # Membangkitkan anak dari parent dengan memindahkan kotak kosong ke atas
-        up = deepcopy(currentPuzzle)
-        up.moveUp()
-        if(not isEqual(up,puzzle_count_node)):
+        if(currentPuzzle.getPosisiEmptyI() != 0 and currentPuzzle.getHistoryRute()[-1] != 'down'):
+            up = deepcopy(currentPuzzle)
+            up.moveUp()
             functionMove(up, 'up', puzzle_saver, puzzle_solution, currentPuzzle.historyRute, puzzle_count_node)
-        
+
         # Membangkitkan anak dari parent dengan memindahkan kotak kosong ke bawah
-        down = deepcopy(currentPuzzle)
-        down.moveDown()
-        if(not isEqual(down,puzzle_count_node)):
+        if(currentPuzzle.getPosisiEmptyI() != 3 and currentPuzzle.getHistoryRute()[-1] != 'up'):
+            down = deepcopy(currentPuzzle)
+            down.moveDown()
             functionMove(down, 'down', puzzle_saver, puzzle_solution, currentPuzzle.historyRute, puzzle_count_node)
         
         # Membangkitkan anak dari parent dengan memindahkan kotak kosong ke kiri
-        left = deepcopy(currentPuzzle)
-        left.moveLeft()
-        if(not isEqual(left,puzzle_count_node)):
+        if(currentPuzzle.getPosisiEmptyJ() != 0 and currentPuzzle.getHistoryRute()[-1] != 'right'):
+            left = deepcopy(currentPuzzle)
+            left.moveLeft()
             functionMove(left, 'left', puzzle_saver, puzzle_solution, currentPuzzle.historyRute, puzzle_count_node)
         
         # Membangkitkan anak dari parent dengan memindahkan kotak kosong ke kanan
-        right = deepcopy(currentPuzzle)
-        right.moveRight()
-        if(not isEqual(right,puzzle_count_node)):
+        if(currentPuzzle.getPosisiEmptyJ() != 3 and currentPuzzle.getHistoryRute()[-1] != 'left'):
+            right = deepcopy(currentPuzzle)
+            right.moveRight()
             functionMove(right, 'right', puzzle_saver, puzzle_solution, currentPuzzle.historyRute, puzzle_count_node)
 
     # Waktu menghitung selesai
@@ -83,7 +92,9 @@ else:
     # Digunakan history rute sebagai penyimpan command yang akan dilakukan oleh puzzle
     # Hasil dari historyRute pada indeks 0 akan dijamin jika dilakukan secara berurutan
     # akan menghasilkan puzzle tujuan
-    for i in puzzle_saver[0].historyRute:
+    for i in puzzle_saver.queue[0][1].historyRute:
+        if(i == 'blank'):
+            continue
         print("Langkah ke-", index, " adalah ")
         if(i == 'up'):
             puzzle.moveUp()

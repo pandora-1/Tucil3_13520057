@@ -3,7 +3,7 @@ from helper import *
 class Puzzle:
     # Daftar atribut
     depth = 0
-    historyRute = []
+    historyRute = ['blank']
     posisiEmptyI = 0
     posisiEmptyJ = 0
 
@@ -16,6 +16,9 @@ class Puzzle:
                     self.setPosisiEmptyI(i)
                     self.setPosisiEmptyJ(j)
                     break
+    
+    def __lt__(self, other):
+        return True
     
     # Getter
     def getPosisiEmptyI(self):
@@ -65,13 +68,19 @@ class Puzzle:
             self.posisiEmptyJ += 1
     
     def printPuzzle(self):
+        print("*----*----*----*----*")
         for i in range(4):
+            print("|", end="")
             for j in range(4):
                 if(self.puzzle[i][j] == 16):
-                    print('  ', end='')
+                    print('   ', end='  ')
                 else:
-                    print(self.puzzle[i][j], end=' ')
-            print()
+                    if(self.puzzle[i][j] < 10):
+                        print('  ' + str(self.puzzle[i][j]), end='  ')
+                    else:
+                        print(' ' + str(self.puzzle[i][j]), end='  ')
+            print("|")
+            print("*----*----*----*----*")
     
     def addRute(self, rute):
         self.historyRute.append(rute)

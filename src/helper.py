@@ -52,19 +52,6 @@ def copyPuzzle(puzzle, puzzle_temp):
             puzzle_temp[i][j] = puzzle[i][j]
     return puzzle_temp
 
-def insertPrioQueue(Q,P, puzzle_solution):
-    for i in range(len(Q)):
-        if P.countCost(puzzle_solution) < Q[i].countCost(puzzle_solution):
-            Q.insert(i, P)
-            return
-    Q.append(P)
-
-def isEqual(P, Q):
-    for i in range(len(Q)):
-        if (P.getPuzzle() == Q[i].getPuzzle()):
-            return True
-    return False
-
 def generatePuzzle():
     puzzle = [[0 for i in range(4)] for i in range(4)]
     pembangkit_acak = random.sample(range(1, 17), 16)
@@ -77,5 +64,6 @@ def functionMove(temp, tujuan, puzzle_saver, puzzle_solution, rute, puzzle_count
     temp.historyRute = deepcopy(rute)
     temp.setDepth(1)
     temp.addRute(tujuan)
-    insertPrioQueue(puzzle_saver, temp, puzzle_solution)
+    cost = temp.countCost(puzzle_solution)
+    puzzle_saver.put((cost,temp))
     puzzle_count_node.append(temp)
